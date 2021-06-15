@@ -1,7 +1,7 @@
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import { ChangeEvent, useState } from "react";
 import URLS from "../../../config/urls";
-import { IForm } from "../Form";
+import { IRegistrationForm } from "../Form";
 import CustomInput from "../../CustomInput";
 import { CustomInputProps } from "../../CustomInput/CustomInput";
 
@@ -16,6 +16,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   textInputs: {
     display: "flex",
     flexWrap: "wrap",
+    justifyContent: "center"
   },
 }));
 
@@ -48,7 +49,7 @@ const inputs: CustomInputProps[] = [
 
 const Registration = () => {
   const classes = useStyles();
-  const [fd, setFd] = useState<IForm>({} as IForm);
+  const [fd, setFd] = useState<IRegistrationForm>({} as IRegistrationForm);
 
   const formHandler = async (e: any) => {
     e.preventDefault();
@@ -79,8 +80,8 @@ const Registration = () => {
         {inputs.map((input) => (
           <CustomInput handler={handleChange} {...input} />
         ))}
+        <input type="submit" />
       </div>
-      <input type="submit" />
     </form>
   );
 };

@@ -1,6 +1,6 @@
 import TextField from "@material-ui/core/TextField";
 import { makeStyles, Theme } from "@material-ui/core/styles";
-import { grey, blue } from "@material-ui/core/colors";
+import { blue } from "@material-ui/core/colors";
 import { ChangeEvent } from "react";
 
 export interface CustomInputProps {
