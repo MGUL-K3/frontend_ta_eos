@@ -4,7 +4,8 @@ import { grey, blue } from "@material-ui/core/colors";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
-import { useRef, useState } from "react";
+import { useState } from "react";
+import URLS from "../../config/urls";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -70,25 +71,17 @@ const Form = () => {
   const classes = useStyles();
   const [fd, setFd] = useState<IForm>({} as IForm);
 
-  const formHandler = (e: any) => {
+  const formHandler = async (e: any) => {
     e.preventDefault();
-    const data = new FormData();
 
-    console.warn(fd.email)
-    data.append("email", fd.email);
-    data.set("group", fd.group);
-    data.set("name", fd.name);
-    data.set("password", fd.password);
-    data.set("patronymic", fd.patronymic);
-    data.set("sumname", fd.sumname);
-    data.set("kek", "kek");
-
-    for(let [name, value] of Object.entries(data)) {
-      console.log(`${name} = ${value}`); // key1=value1, потом key2=value2
-    }
-
-    console.log(fd);
-    console.log(data);
+    await fetch(URLS.registr, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json;charset=utf-8",
+      },
+      body: JSON.stringify(fd),
+    });
+    console.log(JSON.stringify(fd));
   };
 
   const handleChange = (e: any) => {
