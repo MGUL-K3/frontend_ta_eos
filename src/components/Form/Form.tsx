@@ -1,11 +1,14 @@
+import Typography from "@material-ui/core/Typography";
+import Box from "@material-ui/core/Box";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
-import { grey, blue } from "@material-ui/core/colors";
-import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
-import ButtonGroup from "@material-ui/core/ButtonGroup";
+import AppBar from "@material-ui/core/AppBar";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+import { grey } from "@material-ui/core/colors";
+import Registration from "./Registration";
 import { useState } from "react";
-import URLS from "../../config/urls";
+import Login from "./Login";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -21,40 +24,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     backgroundColor: grey[200],
     borderRadius: "16px",
   },
-  form: {
-    height: "100%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    flexWrap: "wrap",
-  },
-  formItem: {
-    width: "100%",
-    color: blue[800],
-    "&:not(:last-child)": {
-      marginBottom: theme.spacing(2),
+  tabBar: {
+    marginBottom: theme.spacing(2),
+    "& .MuiTabs-flexContainer": {
+      justifyContent: "center",
     },
-    "& .MuiOutlinedInput-root": {
-      borderRadius: "16px",
-      "& input": {
-        // color: "white",
-      },
-      "& fieldset": {
-        borderColor: blue[800],
-      },
-      "&:hover fieldset": {
-        borderColor: blue[800],
-      },
-    },
-  },
-  textInputs: {
-    display: "flex",
-    flexWrap: "wrap",
-  },
-  btnGroup: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
   },
 }));
 
@@ -67,91 +41,62 @@ export interface IForm {
   group: string;
 }
 
+export interface TabPanelProps {
+  children?: React.ReactNode;
+  index: any;
+  value: any;
+}
+
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && <>{children}</>}
+    </div>
+  );
+}
+
+function a11yProps(index: any) {
+  return {
+    id: `simple-tab-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
+  };
+}
+
 const Form = () => {
   const classes = useStyles();
-  const [fd, setFd] = useState<IForm>({} as IForm);
+  const [value, setValue] = useState(0);
 
-  const formHandler = async (e: any) => {
-    e.preventDefault();
-
-    await fetch(URLS.registr, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json;charset=utf-8",
-      },
-      body: JSON.stringify(fd),
-    });
-    console.log(JSON.stringify(fd));
-  };
-
-  const handleChange = (e: any) => {
-    setFd({ ...fd, [e.target.id]: e.target.value });
+  const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+    setValue(newValue);
   };
 
   return (
     <div className={classes.root}>
       <Paper className={classes.layout} variant="outlined">
-        <ButtonGroup
-          className={classes.btnGroup}
-          size="small"
-          aria-label="small outlined button group"
-        >
-          <Button>Регистрация</Button>
-          <Button>Авторизация</Button>
-        </ButtonGroup>
-        <form
-          onSubmit={formHandler}
-          className={classes.form}
-          noValidate
-          autoComplete="off"
-        >
-          <div className={classes.textInputs}>
-            <TextField
-              onChange={handleChange}
-              name="user[name]"
-              variant="outlined"
-              className={classes.formItem}
-              id="email"
-              label="Email"
-            />
-            <TextField
-              onChange={handleChange}
-              variant="outlined"
-              className={classes.formItem}
-              id="password"
-              label="Пароль"
-            />
-            <TextField
-              onChange={handleChange}
-              variant="outlined"
-              className={classes.formItem}
-              id="name"
-              label="Имя"
-            />
-            <TextField
-              onChange={handleChange}
-              variant="outlined"
-              className={classes.formItem}
-              id="sumname"
-              label="Фамилия"
-            />
-            <TextField
-              onChange={handleChange}
-              variant="outlined"
-              className={classes.formItem}
-              id="patronymic"
-              label="Отчетство"
-            />
-            <TextField
-              onChange={handleChange}
-              variant="outlined"
-              className={classes.formItem}
-              id="group"
-              label="Группа"
-            />
-          </div>
-          <input type="submit" />
-        </form>
+        <AppBar className={classes.tabBar} position="static">
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            aria-label="simple tabs example"
+          >
+            <Tab label="Вход" {...a11yProps(0)} />
+            <Tab label="Регистрация" {...a11yProps(1)} />
+          </Tabs>
+        </AppBar>
+        <TabPanel value={value} index={0}>
+          <Login />
+        </TabPanel>
+        <TabPanel value={value} index={1}>
+          <Registration />
+        </TabPanel>
       </Paper>
     </div>
   );
