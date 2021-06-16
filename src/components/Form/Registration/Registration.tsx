@@ -35,7 +35,7 @@ const inputs: CustomInputProps[] = [
     label: "Имя",
   },
   {
-    id: "sumname",
+    id: "surname",
     label: "Фамилия",
   },
   {

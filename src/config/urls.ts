@@ -1,6 +1,6 @@
 const URLS = {
-  registr: "http://127.0.0.1:8000/api/v1/users/",
-  login: "http://127.0.0.1:8000/api/v1/users/login/",
+  registr: "http://127.0.0.1:9090/api/v1/users/",
+  login: "http://127.0.0.1:9090/api/v1/users/login/",
 };
 
 export default URLS;
