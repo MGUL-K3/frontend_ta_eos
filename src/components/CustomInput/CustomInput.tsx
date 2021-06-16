@@ -7,6 +7,7 @@ export interface CustomInputProps {
   id: string;
   label?: string;
   handler?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  startVal?: string;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -29,7 +30,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const CustomInput = ({ handler, id, label }: CustomInputProps) => {
+const CustomInput = ({ handler, id, label, startVal }: CustomInputProps) => {
   const classes = useStyles();
 
   return (
