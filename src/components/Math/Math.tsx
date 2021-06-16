@@ -9,13 +9,20 @@ import Paper from "@material-ui/core/Paper";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import { ChangeEvent, useState } from "react";
 import CustomInput, { CustomInputProps } from "../CustomInput/CustomInput";
+import Res from "./Res";
 
 const useStyles = makeStyles((theme: Theme) => ({
+  header: {
+    gridArea: "header",
+  },
   container: {
+    gridTemplateAreas: `
+      '. header .'
+      '. inputs .'
+    `,
     padding: "32px 32px",
     display: "grid",
     gridTemplateRows: "1fr",
-    justifyContent: "center",
     alignItems: "center",
     width: theme.spacing(24),
     height: theme.spacing(24),
@@ -23,21 +30,36 @@ const useStyles = makeStyles((theme: Theme) => ({
     borderRadius: "16px",
     transition: "all 0.5s",
   },
+  containerGetted: {
+    transition: "all 0.5s",
+    justifyContent: "initial",
+    gridTemplateColumns: "repeat(3,1fr)",
+    gridTemplateAreas: `
+      '. header .'
+      'inputs math .'
+    `,
+  },
   selected: {
     gridTemplateRows: "0.1fr 1fr",
     justifyItems: "center",
     padding: "32px 32px",
     transition: "all 0.5s",
     width: theme.spacing(200),
-    height: theme.spacing(84),
+    height: theme.spacing(54),
   },
   select: {
-    justifySelf: "flex-start"
+    justifySelf: "flex-start",
   },
   inputs: {
+    transition: "all 0.5s",
     display: "grid",
-    gap: theme.spacing(4)
-  }
+    gridArea: "inputs",
+    gap: theme.spacing(4),
+  },
+  res: {
+    transition: "all 0.5s",
+    gridArea: "math",
+  },
 }));
 
 export enum multiplyEnum {
@@ -48,6 +70,12 @@ export enum multiplyEnum {
 export interface IMath {
   firstVal: string;
   secondVal: string;
+}
+
+export interface IResult {
+  index: number | null;
+  bin_dec: string | null;
+  value: string;
 }
 
 const inputs: CustomInputProps[] = [
@@ -61,10 +89,49 @@ const inputs: CustomInputProps[] = [
   },
 ];
 
+const okRes: IResult[] = [
+  {
+    index: 0,
+    bin_dec: "1",
+    value: "10010",
+  },
+  {
+    index: 1,
+    bin_dec: "0",
+    value: "00000",
+  },
+  {
+    index: 2,
+    bin_dec: "1",
+    value: "10010",
+  },
+  {
+    index: 3,
+    bin_dec: "0",
+    value: "00000",
+  },
+  {
+    index: 4,
+    bin_dec: "1",
+    value: "10010",
+  },
+  {
+    index: null,
+    bin_dec: null,
+    value: "101111010",
+  },
+];
+
+const okInit: IMath = {
+  firstVal: "10010",
+  secondVal: "10101",
+};
+
 const Math = () => {
   const classes = useStyles();
   const [multiply, setMultiply] = useState<string>(multiplyEnum.NONE);
-  const [math, setMath] = useState<IMath>({} as IMath);
+  const [math, setMath] = useState<IMath>({ ...okInit } as IMath);
+  const [res, setRes] = useState<IResult[]>([]);
 
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setMultiply(event.target.value as string);
@@ -76,15 +143,22 @@ const Math = () => {
     setMath({ ...math, [e?.target?.id]: e.target.value });
   };
 
+  const sendMath = () => {
+    setRes(okRes);
+  };
+
   return (
     <Paper
       className={`${classes.container} ${
         multiply === multiplyEnum.NONE ? "" : classes.selected
-      }`}
+      } 
+      ${res.length > 0 ? classes.containerGetted : ""}`}
       variant="outlined"
     >
-      <div className="header">
-        <FormControl className={ multiply === multiplyEnum.NONE ? "" : classes.select}>
+      <div className={classes.header}>
+        <FormControl
+          className={multiply === multiplyEnum.NONE ? "" : classes.select}
+        >
           <InputLabel id="select-multipy-label">Умножение</InputLabel>
           <Select
             labelId="select-multipy-label"
@@ -101,7 +175,7 @@ const Math = () => {
       </div>
       {multiply !== multiplyEnum.NONE ? (
         <div className={classes.inputs}>
-          <div >
+          <div>
             {inputs.map((input) => (
               <CustomInput
                 handler={inputHandleChange}
@@ -110,13 +184,14 @@ const Math = () => {
               />
             ))}
           </div>
-          <Button variant="contained" color="primary">
+          <Button onClick={sendMath} variant="contained" color="primary">
             Решить
           </Button>
         </div>
       ) : (
         ""
       )}
+      {res.length > 0 ? <Res input={math} res={res} /> : ""}
     </Paper>
   );
 };
