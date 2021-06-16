@@ -1,6 +1,9 @@
+import Button from "@material-ui/core/Button";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import { ChangeEvent, useState } from "react";
 import URLS from "../../../config/urls";
+import { useActions } from "../../../hooks/useActions";
+import { IAuth } from "../../../Redux/reducers/auth";
 import CustomInput, { CustomInputProps } from "../../CustomInput/CustomInput";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -14,7 +17,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   textInputs: {
     display: "flex",
     flexWrap: "wrap",
-    justifyContent: "center"
+    justifyContent: "center",
   },
 }));
 
@@ -34,13 +37,23 @@ export interface ILoginForm {
   password: string;
 }
 
+const okUser: IAuth = {
+  id: 1,
+  email: "dadad",
+  name: "sa",
+  surname: "as",
+  patronymic: "sa",
+  group: "da",
+};
+
 const Login = () => {
+  const {authorize} = useActions();
   const classes = useStyles();
   const [fd, setFd] = useState<ILoginForm>({} as ILoginForm);
 
   const formHandler = async (e: any) => {
     e.preventDefault();
-
+    authorize(okUser);
     await fetch(URLS.login, {
       method: "POST",
       headers: {
@@ -60,9 +73,11 @@ const Login = () => {
     <form onSubmit={formHandler} className={classes.form}>
       <div className={classes.textInputs}>
         {inputs.map((input) => (
-          <CustomInput handler={handleChange} {...input} />
+          <CustomInput key={input.id} handler={handleChange} {...input} />
         ))}
-        <input type="submit" />
+        <Button type="submit" variant="contained" color="primary">
+          Вход
+        </Button>
       </div>
     </form>
   );

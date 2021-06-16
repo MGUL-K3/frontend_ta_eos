@@ -1,3 +1,4 @@
+import Button from "@material-ui/core/Button";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import { ChangeEvent, useState } from "react";
 import URLS from "../../../config/urls";
@@ -16,7 +17,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   textInputs: {
     display: "flex",
     flexWrap: "wrap",
-    justifyContent: "center"
+    justifyContent: "center",
   },
 }));
 
@@ -78,9 +79,11 @@ const Registration = () => {
     >
       <div className={classes.textInputs}>
         {inputs.map((input) => (
-          <CustomInput handler={handleChange} {...input} />
+          <CustomInput key={input.id} handler={handleChange} {...input} />
         ))}
-        <input type="submit" />
+        <Button type="submit" variant="contained" color="primary">
+          Зарегестрироваться
+        </Button>
       </div>
     </form>
   );
