@@ -90,48 +90,14 @@ const inputs: CustomInputProps[] = [
   },
 ];
 
-const okRes: IResult[] = [
-  {
-    index: 0,
-    bin_dec: "1",
-    value: "10010",
-  },
-  {
-    index: 1,
-    bin_dec: "0",
-    value: "00000",
-  },
-  {
-    index: 2,
-    bin_dec: "1",
-    value: "10010",
-  },
-  {
-    index: 3,
-    bin_dec: "0",
-    value: "00000",
-  },
-  {
-    index: 4,
-    bin_dec: "1",
-    value: "10010",
-  },
-  {
-    index: null,
-    bin_dec: null,
-    value: "101111010",
-  },
-];
 
-const okInit: IMath = {
-  firstVal: "10010",
-  secondVal: "10101",
-};
+
+
 
 const Math = () => {
   const classes = useStyles();
   const [multiply, setMultiply] = useState<string>(multiplyEnum.NONE);
-  const [math, setMath] = useState<IMath>({ ...okInit } as IMath);
+  const [math, setMath] = useState<IMath>({} as IMath);
   const [res, setRes] = useState<IResult[]>([]);
 
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -151,7 +117,7 @@ const Math = () => {
       URLS.math.directCode.leftShift +
       `?first_value=${math.firstVal}&second_value=${math.secondVal}`;
 
-    await fetch(newUrl).then((res) => res.json()).then((json) => console.log('>>>',json));
+    await fetch(newUrl).then((res) => res.json()).then((json) => setRes(json));
   };
 
   return (

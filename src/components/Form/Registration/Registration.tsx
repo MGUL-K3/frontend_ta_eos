@@ -7,7 +7,8 @@ import CustomInput from "../../CustomInput";
 import { CustomInputProps } from "../../CustomInput/CustomInput";
 import { Link } from "react-router-dom";
 import { useActions } from "../../../hooks/useActions";
-import { IAuth } from "../../../Redux/reducers/auth";
+import auth, { IAuth } from "../../../Redux/reducers/auth";
+import { useTypedSelector } from "../../../hooks/useTypedSelector";
 
 const useStyles = makeStyles((theme: Theme) => ({
   form: {
@@ -53,21 +54,36 @@ const inputs: CustomInputProps[] = [
 
 const Registration = () => {
   const classes = useStyles();
+  const token = useTypedSelector((store) => store.auth?.token);
   const { authorize, showModal } = useActions();
   const [fd, setFd] = useState<IRegistrationForm>({} as IRegistrationForm);
 
-  const formHandler = async (e: any) => {
+  const formHandler = (e: any) => {
     e.preventDefault();
-
-    await fetch(URLS.registr, {
-      method: "POST",
-      headers: {
+    let headers: HeadersInit | undefined;
+    
+    if (document.cookie && token) {
+      headers = {
         "Content-Type": "application/json;charset=utf-8",
-      },
+        "X-CSRFToken" : token
+      }
+    } else {
+      headers = {
+        "Content-Type": "application/json;charset=utf-8",
+      }
+    }
+
+    fetch(URLS.registr, {
+      method: "POST",
+      headers,
       body: JSON.stringify(fd),
     })
       .then((res) => res.json())
-      .then((json) => authorize(json as IAuth))
+      .then((json) => {
+        json.token = document.cookie.split("=")[1];
+        return json;
+      })
+      .then((final) => authorize(final as IAuth))
       .catch((error) => showModal("Ошибка"));
   };
 

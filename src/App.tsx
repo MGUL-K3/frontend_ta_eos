@@ -3,12 +3,8 @@ import Form from "./components/Form";
 import Home from "./components/Home";
 import Modal from "./components/Modal";
 import { useTypedSelector } from "./hooks/useTypedSelector";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Redirect,
-} from "react-router-dom";
+import { Switch, Route, Redirect } from "react-router-dom";
+import ProtectedRouter from "./components/ProtectedRouter";
 
 function App() {
   const auth = useTypedSelector((state) => state.auth);
@@ -16,19 +12,15 @@ function App() {
   console.log(auth);
 
   return (
-      <Router>
-        <div className="App">
-          <Switch>
-            <Route exact path="/auth">
-              <Form />
-            </Route>
-            <Route path="/">
-              {auth ? <Home /> : <Redirect to="/auth" />}
-            </Route>
-          </Switch>
-        </div>
-        {modal.show ? <Modal /> : ''}
-      </Router>
+    <div className="App">
+      {/* <Switch>
+        <Route exact path="/" component={Form}/>
+        <ProtectedRouter path="/home" component={Home}/>
+      </Switch> */}
+      {modal.show ? <Modal /> : ""}
+
+      {auth ? <Home /> : <Form/>}
+    </div>
   );
 }
 

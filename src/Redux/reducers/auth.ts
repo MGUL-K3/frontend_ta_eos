@@ -1,25 +1,17 @@
 enum authAPI {
   AUTHORIZE = "AUTHORIZE",
-  LOG_OUT = "LOG_OUT",
+  LOG_OUT = "LOG_OUT"
 }
 
 export interface IAuth {
-  id: number;
+  id: number | null;
   email: string;
   name: string;
   surname: string;
   patronymic: string;
   group: string;
+  token: string | null;
 }
-
-// const initialState: IAuth = {
-//   id: 0,
-//   email: "",
-//   name: "",
-//   surname: "",
-//   patronymic: "",
-//   group: "",
-// };
 
 const initialState: null = null;
 
