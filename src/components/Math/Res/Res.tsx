@@ -1,5 +1,6 @@
 import classes from "*.module.css";
 import { makeStyles, Theme } from "@material-ui/core/styles";
+import { useEffect, useState } from "react";
 import { IMath, IResult } from "../Math";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -49,8 +50,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: "12px",
   },
   down: {
-    fontSize: "7px"
-  }
+    fontSize: "7px",
+  },
 }));
 
 export interface ResProps {
@@ -60,13 +61,18 @@ export interface ResProps {
 
 const Res = ({ res, input }: ResProps) => {
   const classes = useStyles();
+  const [savedInput, setSavedInput] = useState<IMath>({} as IMath);
+
+  useEffect(() => {
+    setSavedInput(input);
+  }, [res]);
 
   const getRow = (count: number | null, val: string) => {
     if (count === null) {
       return <span className={classes.final}>{val}</span>;
     }
     const res: any[] = [];
-    val.split("").map((bit, index) => res.push(<span>{bit}</span>));
+    val.split("").map((bit) => res.push(<span>{bit}</span>));
 
     for (let i = 0; i < count; i++) {
       res.push(<span className={classes.space}>_</span>);
@@ -83,7 +89,7 @@ const Res = ({ res, input }: ResProps) => {
         </p>
       );
     }
-    return <p className={classes.row}>П =</p>
+    return <p className={classes.row}>П =</p>;
   };
 
   return (
@@ -94,8 +100,10 @@ const Res = ({ res, input }: ResProps) => {
         {res.map((row) => getShowBit(row))}
       </div>
       <div className={classes.res}>
-        <p className={classes.row}>{input.firstVal}</p>
-        <p className={`${classes.row} ${classes.lastRow}`}>{input.secondVal}</p>
+        <p className={classes.row}>{savedInput.firstVal}</p>
+        <p className={`${classes.row} ${classes.lastRow}`}>
+          {savedInput.secondVal}
+        </p>
         {res.map((row) => (
           <p className={classes.row}>{getRow(row.index, row.value)}</p>
         ))}
