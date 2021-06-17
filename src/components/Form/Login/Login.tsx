@@ -3,7 +3,7 @@ import { makeStyles, Theme } from "@material-ui/core/styles";
 import { ChangeEvent, useState } from "react";
 import URLS from "../../../config/urls";
 import { useActions } from "../../../hooks/useActions";
-import { IAuth } from "../../../Redux/reducers/auth";
+import auth, { IAuth } from "../../../Redux/reducers/auth";
 import CustomInput, { CustomInputProps } from "../../CustomInput/CustomInput";
 import { Link } from "react-router-dom";
 
@@ -48,20 +48,24 @@ const okUser: IAuth = {
 };
 
 const Login = () => {
-  const {authorize} = useActions();
+  const { authorize, showModal } = useActions();
   const classes = useStyles();
   const [fd, setFd] = useState<ILoginForm>({} as ILoginForm);
 
   const formHandler = async (e: any) => {
     e.preventDefault();
-    authorize(okUser);
     await fetch(URLS.login, {
       method: "POST",
       headers: {
         "Content-Type": "application/json;charset=utf-8",
       },
       body: JSON.stringify(fd),
-    });
+    })
+      .then((res) => res.json())
+      .then((json) => authorize(json as IAuth))
+      .catch((error) => {
+        showModal("eror");
+      });
   };
 
   const handleChange = (

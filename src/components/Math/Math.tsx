@@ -10,6 +10,7 @@ import { makeStyles, Theme } from "@material-ui/core/styles";
 import { ChangeEvent, useState } from "react";
 import CustomInput, { CustomInputProps } from "../CustomInput/CustomInput";
 import Res from "./Res";
+import URLS from "../../config/urls";
 
 const useStyles = makeStyles((theme: Theme) => ({
   header: {
@@ -143,8 +144,14 @@ const Math = () => {
     setMath({ ...math, [e?.target?.id]: e.target.value });
   };
 
-  const sendMath = () => {
-    setRes(okRes);
+  const sendMath = async () => {
+    //setRes(okRes);
+
+    const newUrl =
+      URLS.math.directCode.leftShift +
+      `?first_value=${math.firstVal}&second_value=${math.secondVal}`;
+
+    await fetch(newUrl).then((res) => res.json()).then((json) => console.log('>>>',json));
   };
 
   return (

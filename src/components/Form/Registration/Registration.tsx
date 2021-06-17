@@ -6,6 +6,8 @@ import { IRegistrationForm } from "../Form";
 import CustomInput from "../../CustomInput";
 import { CustomInputProps } from "../../CustomInput/CustomInput";
 import { Link } from "react-router-dom";
+import { useActions } from "../../../hooks/useActions";
+import { IAuth } from "../../../Redux/reducers/auth";
 
 const useStyles = makeStyles((theme: Theme) => ({
   form: {
@@ -51,6 +53,7 @@ const inputs: CustomInputProps[] = [
 
 const Registration = () => {
   const classes = useStyles();
+  const { authorize, showModal } = useActions();
   const [fd, setFd] = useState<IRegistrationForm>({} as IRegistrationForm);
 
   const formHandler = async (e: any) => {
@@ -62,7 +65,10 @@ const Registration = () => {
         "Content-Type": "application/json;charset=utf-8",
       },
       body: JSON.stringify(fd),
-    });
+    })
+      .then((res) => res.json())
+      .then((json) => authorize(json as IAuth))
+      .catch((error) => showModal("error"));
   };
 
   const handleChange = (
