@@ -49,7 +49,7 @@ export interface ILoginForm {
 // };
 
 const Login = () => {
-  const { authorize, showModal } = useActions();
+  const { authorize, showModal, isInside } = useActions();
   const classes = useStyles();
   const token = useTypedSelector((store) => store.auth?.token);
   const [fd, setFd] = useState<ILoginForm>({} as ILoginForm);
@@ -79,6 +79,7 @@ const Login = () => {
       .then((json) => {
         json.token = document.cookie.split("=")[1];
         authorize(json as IAuth);
+        
       })
       .catch((error) => {
         showModal("Неправильно введен email или пароль");

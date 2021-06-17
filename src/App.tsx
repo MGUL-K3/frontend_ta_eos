@@ -5,11 +5,20 @@ import Modal from "./components/Modal";
 import { useTypedSelector } from "./hooks/useTypedSelector";
 import { Switch, Route, Redirect } from "react-router-dom";
 import ProtectedRouter from "./components/ProtectedRouter";
+import { useActions } from "./hooks/useActions";
+import { useEffect } from "react";
 
 function App() {
   const auth = useTypedSelector((state) => state.auth);
   const modal = useTypedSelector((state) => state.modal);
-  console.log(auth);
+  const inside = useTypedSelector((state) => state.inside.inside);
+  const {isInside} = useActions();
+  console.log('user', auth);
+  console.log('inside', inside)
+
+  useEffect(() => {
+    isInside();
+  }, [])
 
   return (
     <div className="App">
@@ -19,7 +28,7 @@ function App() {
       </Switch> */}
       {modal.show ? <Modal /> : ""}
 
-      {auth ? <Home /> : <Form/>}
+      {inside ? <Home /> : <Form/>}
     </div>
   );
 }
