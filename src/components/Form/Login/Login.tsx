@@ -5,6 +5,7 @@ import URLS from "../../../config/urls";
 import { useActions } from "../../../hooks/useActions";
 import auth, { IAuth } from "../../../Redux/reducers/auth";
 import CustomInput, { CustomInputProps } from "../../CustomInput/CustomInput";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) => ({
   form: {
@@ -79,9 +80,11 @@ const Login = () => {
         {inputs.map((input) => (
           <CustomInput key={input.id} handler={handleChange} {...input} />
         ))}
-        <Button type="submit" variant="contained" color="primary">
-          Вход
-        </Button>
+        <Link to="/">
+          <Button type="submit" variant="contained" color="primary">
+            Вход
+          </Button>
+        </Link>
       </div>
     </form>
   );
