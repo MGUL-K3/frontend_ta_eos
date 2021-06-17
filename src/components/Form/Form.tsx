@@ -8,6 +8,8 @@ import { useState } from "react";
 import Registration from "./Registration";
 import Login from "./Login";
 
+const animDur = 500;
+
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
     display: "flex",
@@ -16,11 +18,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: "100%",
   },
   layout: {
+    overflow: "hidden",
     padding: "32px 32px",
     width: theme.spacing(64),
-    height: theme.spacing(64),
     backgroundColor: grey[200],
     borderRadius: "16px",
+    transition: "all 0.5s ease-in-out"
   },
   tabBar: {
     marginBottom: theme.spacing(2),
@@ -28,6 +31,18 @@ const useStyles = makeStyles((theme: Theme) => ({
       justifyContent: "center",
     },
   },
+  login: {
+    height: theme.spacing(30),
+  },
+  reg: {
+    height: theme.spacing(64),
+  },
+  close: {
+    height: theme.spacing(3.5)
+  },
+  tab: {
+
+  }
 }));
 
 export interface IRegistrationForm {
@@ -51,10 +66,10 @@ function TabPanel(props: TabPanelProps) {
   return (
     <div
       role="tabpanel"
-      hidden={value !== index}
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
       {...other}
+      
     >
       {value === index && <>{children}</>}
     </div>
@@ -71,14 +86,23 @@ function a11yProps(index: any) {
 const Form = () => {
   const classes = useStyles();
   const [value, setValue] = useState(0);
+  const [anim, setAnim] = useState<string>(classes.login);
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-    setValue(newValue);
+    setTimeout(() => {setValue(newValue)}, animDur)
+    close();
   };
+
+  const close = () => {
+    setAnim(classes.close);
+    setTimeout(() => {
+      return setAnim(value ? classes.login : classes.reg)
+    }, animDur)
+  }
 
   return (
     <div className={classes.root}>
-      <Paper className={classes.layout} variant="outlined">
+      <Paper className={`${classes.layout} ${anim}`} variant="outlined">
         <AppBar className={classes.tabBar} position="static">
           <Tabs
             value={value}

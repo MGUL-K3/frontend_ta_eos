@@ -68,7 +68,7 @@ const Registration = () => {
     })
       .then((res) => res.json())
       .then((json) => authorize(json as IAuth))
-      .catch((error) => showModal("error"));
+      .catch((error) => showModal("Ошибка"));
   };
 
   const handleChange = (

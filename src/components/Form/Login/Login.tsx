@@ -64,7 +64,7 @@ const Login = () => {
       .then((res) => res.json())
       .then((json) => authorize(json as IAuth))
       .catch((error) => {
-        showModal("eror");
+        showModal("Неправильно введен email или пароль");
       });
   };
 

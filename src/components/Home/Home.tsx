@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const Home = () => {
   const classes = useStyles();
-
+  console.log('dir')
   return (
     <div className={classes.container}>
       <Math />

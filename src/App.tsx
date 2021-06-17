@@ -19,7 +19,7 @@ function App() {
       <Router>
         <div className="App">
           <Switch>
-            <Route path="/auth">
+            <Route exact path="/auth">
               <Form />
             </Route>
             <Route path="/">
@@ -27,6 +27,7 @@ function App() {
             </Route>
           </Switch>
         </div>
+        {modal.show ? <Modal /> : ''}
       </Router>
   );
 }
