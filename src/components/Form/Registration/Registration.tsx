@@ -78,21 +78,20 @@ const Registration = () => {
   };
 
   return (
-    <form
-      onSubmit={formHandler}
-      className={classes.form}
-      noValidate
-      autoComplete="off"
-    >
+    <form className={classes.form} noValidate autoComplete="off">
       <div className={classes.textInputs}>
         {inputs.map((input) => (
           <CustomInput key={input.id} handler={handleChange} {...input} />
         ))}
-        <Link to="/">
-          <Button type="submit" variant="contained" color="primary">
-            Зарегистрироваться
-          </Button>
-        </Link>
+        <Button
+          onClick={formHandler}
+          component={Link}
+          to="/"
+          variant="contained"
+          color="primary"
+        >
+          Зарегистрироваться
+        </Button>
       </div>
     </form>
   );

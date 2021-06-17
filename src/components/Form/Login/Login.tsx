@@ -75,16 +75,14 @@ const Login = () => {
   };
 
   return (
-    <form onSubmit={formHandler} className={classes.form}>
+    <form className={classes.form}>
       <div className={classes.textInputs}>
         {inputs.map((input) => (
           <CustomInput key={input.id} handler={handleChange} {...input} />
         ))}
-        <Link to="/">
-          <Button type="submit" variant="contained" color="primary">
+          <Button onClick={formHandler} component={ Link } to="/" variant="contained" color="primary">
             Вход
           </Button>
-        </Link>
       </div>
     </form>
   );
