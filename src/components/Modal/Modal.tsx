@@ -6,9 +6,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     position: "absolute",
     width: theme.spacing(16),
     height: theme.spacing(8),
-    top: "50%",
+    bottom: "2%",
     left: "50%",
     transform: "translate(-50%,-50%)",
+    transition: "all 0.5s",
   },
 }));
 
