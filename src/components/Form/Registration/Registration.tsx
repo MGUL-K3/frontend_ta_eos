@@ -5,6 +5,7 @@ import URLS from "../../../config/urls";
 import { IRegistrationForm } from "../Form";
 import CustomInput from "../../CustomInput";
 import { CustomInputProps } from "../../CustomInput/CustomInput";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) => ({
   form: {
@@ -81,9 +82,11 @@ const Registration = () => {
         {inputs.map((input) => (
           <CustomInput key={input.id} handler={handleChange} {...input} />
         ))}
-        <Button type="submit" variant="contained" color="primary">
-          Зарегестрироваться
-        </Button>
+        <Link to="/">
+          <Button type="submit" variant="contained" color="primary">
+            Зарегистрироваться
+          </Button>
+        </Link>
       </div>
     </form>
   );
