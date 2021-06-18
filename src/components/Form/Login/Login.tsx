@@ -3,9 +3,9 @@ import { makeStyles, Theme } from "@material-ui/core/styles";
 import { ChangeEvent, useState } from "react";
 import URLS from "../../../config/urls";
 import { useActions } from "../../../hooks/useActions";
-import auth, { IAuth } from "../../../Redux/reducers/auth";
+import { IAuth } from "../../../Redux/reducers/auth";
 import CustomInput, { CustomInputProps } from "../../CustomInput/CustomInput";
-import { Link, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useTypedSelector } from "../../../hooks/useTypedSelector";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -49,8 +49,7 @@ export interface ILoginForm {
 // };
 
 const Login = () => {
-  const { authorize, showModal, isInside } = useActions();
-  const history = useHistory();
+  const { authorize, showModal } = useActions();
   const classes = useStyles();
   const token = useTypedSelector((store) => store.auth?.token);
   const [fd, setFd] = useState<ILoginForm>({} as ILoginForm);
@@ -79,7 +78,6 @@ const Login = () => {
       .then((json) => {
         json.token = document.cookie.split("=")[1];
         json.inside = true;
-        
         authorize(json as IAuth);
       })
       .catch((error) => {
