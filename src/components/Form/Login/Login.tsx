@@ -55,18 +55,17 @@ const Login = () => {
   const [fd, setFd] = useState<ILoginForm>({} as ILoginForm);
 
   const formHandler = (e: any) => {
-
     let headers: HeadersInit | undefined;
-    
+
     if (document.cookie && token) {
       headers = {
         "Content-Type": "application/json;charset=utf-8",
-        "X-CSRFToken" : token
-      }
+        "X-CSRFToken": token,
+      };
     } else {
       headers = {
         "Content-Type": "application/json;charset=utf-8",
-      }
+      };
     }
 
     e.preventDefault();
@@ -78,8 +77,8 @@ const Login = () => {
       .then((res) => res.json())
       .then((json) => {
         json.token = document.cookie.split("=")[1];
+        json.inside = true;
         authorize(json as IAuth);
-        
       })
       .catch((error) => {
         showModal("Неправильно введен email или пароль");
@@ -98,15 +97,11 @@ const Login = () => {
         {inputs.map((input) => (
           <CustomInput key={input.id} handler={handleChange} {...input} />
         ))}
-        <Button
-          onClick={formHandler}
-          component={Link}
-          to="/home"
-          variant="contained"
-          color="primary"
-        >
-          Вход
-        </Button>
+        <Link  onClick={formHandler} to="/home">
+          <Button variant="contained" color="primary">
+            Вход
+          </Button>
+        </Link>
       </div>
     </form>
   );

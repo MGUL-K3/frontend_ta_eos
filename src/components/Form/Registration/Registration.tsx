@@ -61,16 +61,16 @@ const Registration = () => {
   const formHandler = (e: any) => {
     e.preventDefault();
     let headers: HeadersInit | undefined;
-    
+
     if (document.cookie && token) {
       headers = {
         "Content-Type": "application/json;charset=utf-8",
-        "X-CSRFToken" : token
-      }
+        "X-CSRFToken": token,
+      };
     } else {
       headers = {
         "Content-Type": "application/json;charset=utf-8",
-      }
+      };
     }
 
     fetch(URLS.registr, {
@@ -81,6 +81,7 @@ const Registration = () => {
       .then((res) => res.json())
       .then((json) => {
         json.token = document.cookie.split("=")[1];
+        json.inside = true;
         return json;
       })
       .then((final) => authorize(final as IAuth))
@@ -99,15 +100,11 @@ const Registration = () => {
         {inputs.map((input) => (
           <CustomInput key={input.id} handler={handleChange} {...input} />
         ))}
-        <Button
-          onClick={formHandler}
-          component={Link}
-          to="/"
-          variant="contained"
-          color="primary"
-        >
-          Зарегистрироваться
-        </Button>
+        <Link  onClick={formHandler} to="/home">
+          <Button variant="contained" color="primary">
+            Зарегистрироваться
+          </Button>
+        </Link>
       </div>
     </form>
   );

@@ -1,15 +1,19 @@
-import React, { Component } from "react";
+import React, { Component, useEffect } from "react";
 import { Route } from "react-router";
 import { Redirect, RouteComponentProps } from "react-router-dom";
 import { useTypedSelector } from "../../hooks/useTypedSelector";
 
 export interface ProtectedRouterProps {
-  component: React.ComponentType<RouteComponentProps<any>> | React.ComponentType<any>;
+  component:any;
   path: string
 }
 
 const ProtectedRouter = ({ component, ...rest }: ProtectedRouterProps) => {
-  const auth = useTypedSelector((store) => store.auth);
+  const auth = useTypedSelector((store) => store.auth?.inside);
+  
+  useEffect(() => {
+    console.log(">>>", rest);
+  }, [])
 
   return (
     <Route
