@@ -237,6 +237,7 @@ const Math = () => {
             value={multiply}
             onChange={handleChange}
           >
+            {/* Добавляем селект для выбора способа умножения */}
             <MenuItem value={multiplyEnum.DIRECT_SHIFT_LEFT}>
               {multiplyEnum.DIRECT_SHIFT_LEFT}
             </MenuItem>
