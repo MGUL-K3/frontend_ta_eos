@@ -7,10 +7,10 @@ import Button from "@material-ui/core/Button";
 import { blue, grey, red } from "@material-ui/core/colors";
 import Paper from "@material-ui/core/Paper";
 import { makeStyles, Theme } from "@material-ui/core/styles";
-import { Fade } from "@material-ui/core";
-import React, { ChangeEvent, ReactEventHandler, useRef, useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import CustomInput, { CustomInputProps } from "../CustomInput/CustomInput";
 import Res from "./ShiftRes";
+import RightRes from "./RightShift";
 import URLS from "../../config/urls";
 import TextField from "@material-ui/core/TextField";
 
@@ -133,11 +133,11 @@ const Math = () => {
   const [math, setMath] = useState<IMath>({} as IMath);
   const [res, setRes] = useState<IResult[]>({} as IResult[]);
   const [tmpPoint, setPoint] = useState<number>(-1);
-  const [tmpStep, setStep] = useState<string>("");
-  const [stepValue, setStepValue] = useState<string>("");
-  // let stepValue = '';
+  const [tmpStep, setStep] = useState<string>(""); // тут лежит то, что написано в инпуте текущего шага
+  const [stepValue, setStepValue] = useState<string>(""); // а тут последнее значение, которое юзер отправил в ответ (чтобы поле error у инпута работало)
 
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setRes([]);
     setMultiply(event.target.value as string);
   };
 
@@ -154,19 +154,27 @@ const Math = () => {
     fetch(newUrl)
       .then((res) => res.json())
       .then((json) => {
-        console.log(json);
-        if (json && json != []) {
-          console.log("IN");
+        if (json && json.length > 0) {
           setStepValue(json[0].value as string);
         }
-        console.log("VALUE:", stepValue);
         setPoint(0);
         setRes(json);
       });
   };
 
   const sendDirectShiftRight = () => {
-    // сюды вставить код когда сделаете новое умножение
+    const { firstVal, secondVal } = math;
+    const newUrl: string = URLS.math.directCode.rightShift(firstVal, secondVal);
+
+    fetch(newUrl)
+        .then((res) => res.json())
+        .then((json) => {
+          if (json && json.length > 0) {
+            setStepValue(json[0].value as string);
+          }
+          setPoint(0);
+          setRes(json);
+        });
   };
 
   /**
@@ -202,10 +210,8 @@ const Math = () => {
 
   const checkStepClick = () => {
     setStepValue(tmpStep as string);
-    console.log("VALUE:", stepValue);
-    console.log("RIGHT:", res[tmpPoint].value);
     if (tmpStep === res[tmpPoint].value) {
-      setStep("");
+      setStep('');
       nextStep();
     }
   };
@@ -241,6 +247,9 @@ const Math = () => {
             <MenuItem value={multiplyEnum.DIRECT_SHIFT_LEFT}>
               {multiplyEnum.DIRECT_SHIFT_LEFT}
             </MenuItem>
+            <MenuItem value={multiplyEnum.DIRECT_SHIFT_RIGHT}>
+              {multiplyEnum.DIRECT_SHIFT_RIGHT}
+            </MenuItem>
           </Select>
           <FormHelperText>Выберите способ умножения</FormHelperText>
         </FormControl>
@@ -265,7 +274,9 @@ const Math = () => {
       )}
 
       {res.length > 0 && tmpPoint > -1 ? (
-        <Res input={math} res={res} tmpRow={tmpPoint} />
+          multiply == multiplyEnum.DIRECT_SHIFT_LEFT ?
+            <Res input={math} res={res} tmpRow={tmpPoint} /> :
+            <RightRes input={math} res={res} tmpRow={tmpPoint} />
       ) : (
         ""
       )}
@@ -281,7 +292,6 @@ const Math = () => {
             variant="outlined"
             label="Промежуточный результат"
             error={checker()}
-            helperText="Неверный ответ"
           />
           <Button
             onClick={checkStepClick}

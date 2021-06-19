@@ -56,6 +56,13 @@ const useStyles = makeStyles((theme: Theme) => ({
   down: {
     fontSize: "7px",
   },
+  bit: {
+    width: "12px",
+    textAlign: "center",
+  },
+  number: {
+    display: "flex",
+  },
 }));
 
 export interface ShiftResProps {
@@ -72,18 +79,21 @@ const ShiftRes = ({ res, input, tmpRow }: ShiftResProps) => {
     setSavedInput(input);
   }, [res]);
 
-  const getRow = (count: number | null, val: string, num: number) => {
-    if (count === null) {
-      return <Fade in={tmpRow > num} timeout={{enter: 1500, exit: 0}}><span className={classes.final}>{val}</span></Fade>;
-    }
+  const getRow = (count: number | null, val: string, num: number, arr: IResult[]) => {
     const res: any[] = [];
-    val.split("").map((bit) => res.push(<span>{bit}</span>));
 
-    for (let i = 0; i < count; i++) {
+    if (count === null) {
+      val.split("").map((bit) => res.push(<div className={classes.bit}>{bit}</div>));
+      return <Fade in={tmpRow > num} timeout={{enter: 1500, exit: 0}}><div className={classes.final}><span className={classes.number}>{res}</span></div></Fade>;
+    }
+
+    val.split('').map((bit) => res.push(<div className={classes.bit}>{bit}</div>));
+
+    for (let i = 0; i < (count as number); i++) {
       res.push(<span className={classes.space}>{placeholder}</span>);
     }
 
-    return <Fade in={tmpRow > num} timeout={{enter: 1500, exit: 0}}><span>{res}</span></Fade>;
+    return <Fade in={tmpRow > num} timeout={{enter: 1500, exit: 0}}><span className={classes.number}>{res}</span></Fade>;
   };
 
   const getShowBit = (row: IResult, num: number) => {
@@ -111,8 +121,8 @@ const ShiftRes = ({ res, input, tmpRow }: ShiftResProps) => {
         <p className={`${classes.row} ${classes.lastRow}`}>
           {savedInput.secondVal}
         </p>
-        {res.map((row, num) => (
-          <p className={classes.row}>{getRow(row.index, row.value, num)}</p>
+        {res.map((row, num, arr) => (
+          <p className={classes.row}>{getRow(row.index, row.value, num, arr)}</p>
         ))}
       </div>
       <div className={classes.showPow}>

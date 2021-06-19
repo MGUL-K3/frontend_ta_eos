@@ -9,6 +9,8 @@ const URLS = {
     directCode: {
       leftShift: (f: string, s: string) =>
         `http://127.0.0.1:${port}/api/v1/calculations/direct_code/left_shift/?first_value=${f}&second_value=${s}`,
+      rightShift: (f: string, s: string) =>
+          `http://127.0.0.1:${port}/api/v1/calculations/direct_code/right_shift/?first_value=${f}&second_value=${s}`,
     },
   },
 };
