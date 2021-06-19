@@ -29,26 +29,32 @@ const inputs: CustomInputProps[] = [
   {
     id: "email",
     label: "Email",
+    isPassword: false,
   },
   {
     id: "password",
     label: "Пароль",
+    isPassword: true,
   },
   {
     id: "name",
     label: "Имя",
+    isPassword: false,
   },
   {
     id: "surname",
     label: "Фамилия",
+    isPassword: false,
   },
   {
     id: "patronymic",
     label: "Отчество",
+    isPassword: false,
   },
   {
     id: "group",
     label: "Группа",
+    isPassword: false,
   },
 ];
 

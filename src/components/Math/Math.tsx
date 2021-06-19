@@ -4,13 +4,15 @@ import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import Button from "@material-ui/core/Button";
-import { grey } from "@material-ui/core/colors";
+import {blue, grey, red} from "@material-ui/core/colors";
 import Paper from "@material-ui/core/Paper";
 import { makeStyles, Theme } from "@material-ui/core/styles";
-import { ChangeEvent, useState } from "react";
+import { Fade } from "@material-ui/core";
+import React, {ChangeEvent, ReactEventHandler, useRef, useState} from "react";
 import CustomInput, { CustomInputProps } from "../CustomInput/CustomInput";
 import Res from "./Res";
 import URLS from "../../config/urls";
+import TextField from "@material-ui/core/TextField";
 
 const useStyles = makeStyles((theme: Theme) => ({
   header: {
@@ -37,7 +39,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     gridTemplateColumns: "repeat(3,1fr)",
     gridTemplateAreas: `
       '. header .'
-      'inputs math .'
+      'inputs math steps'
     `,
   },
   selected: {
@@ -60,6 +62,28 @@ const useStyles = makeStyles((theme: Theme) => ({
   res: {
     transition: "all 0.5s",
     gridArea: "math",
+  },
+  steps: {
+    justifyItems: "center",
+    alignItems: "center",
+    gridArea: "steps",
+    display: "grid",
+    gap: theme.spacing(1),
+    width: "100%",
+  },
+  stepInput: {
+    width: "100%",
+    color: blue[800],
+    "&:not(:last-child)": {
+      marginBottom: theme.spacing(2),
+    },
+    "& .MuiOutlinedInput-root": {
+      borderRadius: "16px",
+      "& input": {},
+      "& fieldset": {
+        borderColor: blue[800],
+      },
+    },
   },
 }));
 
@@ -98,7 +122,11 @@ const Math = () => {
   const classes = useStyles();
   const [multiply, setMultiply] = useState<string>(multiplyEnum.NONE);
   const [math, setMath] = useState<IMath>({} as IMath);
-  const [res, setRes] = useState<IResult[]>([]);
+  const [res, setRes] = useState<IResult[]>({} as IResult[]);
+  const [tmpPoint, setPoint] = useState<number>(-1);
+  const [tmpStep, setStep] = useState<string>('');
+  const [stepValue, setStepValue] = useState<string>('');
+  // let stepValue = '';
 
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setMultiply(event.target.value as string);
@@ -110,15 +138,52 @@ const Math = () => {
     setMath({ ...math, [e?.target?.id]: e.target.value });
   };
 
-  const sendMath = async () => {
+  const sendMath = () => {
     //setRes(okRes);
 
     const newUrl =
       URLS.math.directCode.leftShift +
       `?first_value=${math.firstVal}&second_value=${math.secondVal}`;
 
-    await fetch(newUrl).then((res) => res.json()).then((json) => setRes(json));
+    fetch(newUrl).then((res) => res.json()).then((json) => {
+      console.log(json)
+      if (json && json != []) {
+        console.log('IN')
+        setStepValue(json[0].value as string);
+      }
+      console.log('VALUE:', stepValue)
+      setPoint(0);
+      setRes(json)
+    });
   };
+
+  const onStepChange = (event: any) => {
+    setStep(event.target.value);
+  }
+
+  const nextStep = () => {
+    if (tmpPoint < res.length - 1) {
+      setStepValue(res[tmpPoint + 1].value as string);
+      setPoint(tmpPoint + 1);
+    } else {
+      setPoint(tmpPoint + 1);
+    }
+  }
+
+  const checkStepClick = () => {
+    setStepValue(tmpStep as string);
+    console.log('VALUE:', stepValue)
+    console.log('RIGHT:', res[tmpPoint].value)
+    if (tmpStep === res[tmpPoint].value) {
+      setStep('');
+      nextStep();
+    }
+  }
+
+  const checker = (): boolean => {
+    // console.log('CHECKER >>> ' ,res[tmpPoint].value, '===', stepValue, 'tmpPoint = ', tmpPoint);
+    return res[tmpPoint < res.length - 1 ? tmpPoint : res.length - 1].value !== stepValue;
+  }
 
   return (
     <Paper
@@ -143,7 +208,7 @@ const Math = () => {
               {multiplyEnum.DIRECT_SHIFT_RIGHT}
             </MenuItem>
           </Select>
-          <FormHelperText>Выберите способ умноженя</FormHelperText>
+          <FormHelperText>Выберите способ умножения</FormHelperText>
         </FormControl>
       </div>
       {multiply !== multiplyEnum.NONE ? (
@@ -164,7 +229,31 @@ const Math = () => {
       ) : (
         ""
       )}
-      {res.length > 0 ? <Res input={math} res={res} /> : ""}
+
+      {(res.length > 0 && tmpPoint > -1) ? <Res input={math} res={res} tmpRow={tmpPoint} /> : ""}
+
+      {res.length > 0 ?
+          <div className={classes.steps}>
+            <TextField
+                value={tmpStep}
+                id="stepVal"
+                className={classes.stepInput}
+                onChange={onStepChange}
+                key="stepVal"
+                variant="outlined"
+                label="Промежуточный результат"
+                error={checker()}
+                helperText="Неверный ответ"
+            />
+            <Button onClick={checkStepClick} disabled={tmpPoint >= res.length} id="nextStepButton" variant="contained" color="primary">
+              Следующий шаг
+            </Button>
+            <Button onClick={nextStep} disabled={tmpPoint >= res.length} id="nextStepButton" variant="contained" color="primary">
+              Подсказать значение
+            </Button>
+          </div> : ""
+      }
+
     </Paper>
   );
 };

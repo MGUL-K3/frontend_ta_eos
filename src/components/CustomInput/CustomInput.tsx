@@ -8,6 +8,7 @@ export interface CustomInputProps {
   label?: string;
   handler?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   startVal?: string;
+  isPassword?: boolean;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -30,7 +31,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const CustomInput = ({ handler, id, label, startVal }: CustomInputProps) => {
+const CustomInput = ({ handler, id, label, startVal, isPassword }: CustomInputProps) => {
   const classes = useStyles();
 
   return (
@@ -40,6 +41,7 @@ const CustomInput = ({ handler, id, label, startVal }: CustomInputProps) => {
       className={classes.formItem}
       id={id}
       label={label}
+      type={isPassword ? 'password' : 'text'}
     />
   );
 };

@@ -2,15 +2,16 @@ import classes from "*.module.css";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import { useEffect, useState } from "react";
 import { IMath, IResult } from "../Math";
+import {Fade} from "@material-ui/core";
 
 const useStyles = makeStyles((theme: Theme) => ({
   layout: {
     display: "grid",
+    gap: theme.spacing(3),
     gridTemplateColumns: "repeat(3, 1fr)",
     gridArea: "math",
   },
   showBit: {
-    paddingRight: theme.spacing(2),
     "& > p": {
       margin: 0,
       textAlign: "end",
@@ -20,13 +21,13 @@ const useStyles = makeStyles((theme: Theme) => ({
   showPow: {
     "& > p": {
       display: "flex",
-      justifyContent: "flex-end",
+      justifyContent: "flex-start",
     },
   },
   res: {
     display: "flex",
     flexDirection: "column",
-    alignItems: "end",
+    alignItems: "flex-end",
   },
   row: {
     margin: 0,
@@ -57,9 +58,10 @@ const useStyles = makeStyles((theme: Theme) => ({
 export interface ResProps {
   input: IMath;
   res: IResult[];
+  tmpRow: number;
 }
 
-const Res = ({ res, input }: ResProps) => {
+const Res = ({ res, input, tmpRow }: ResProps) => {
   const classes = useStyles();
   const [savedInput, setSavedInput] = useState<IMath>({} as IMath);
 
@@ -67,9 +69,9 @@ const Res = ({ res, input }: ResProps) => {
     setSavedInput(input);
   }, [res]);
 
-  const getRow = (count: number | null, val: string) => {
+  const getRow = (count: number | null, val: string, num: number) => {
     if (count === null) {
-      return <span className={classes.final}>{val}</span>;
+      return <Fade in={tmpRow > num} timeout={{enter: 1500, exit: 0}}><span className={classes.final}>{val}</span></Fade>;
     }
     const res: any[] = [];
     val.split("").map((bit) => res.push(<span>{bit}</span>));
@@ -78,18 +80,20 @@ const Res = ({ res, input }: ResProps) => {
       res.push(<span className={classes.space}>_</span>);
     }
 
-    return res;
+    return <Fade in={tmpRow > num} timeout={{enter: 1500, exit: 0}}><span>{res}</span></Fade>;
   };
 
-  const getShowBit = (row: IResult) => {
+  const getShowBit = (row: IResult, num: number) => {
     if (row.bin_dec !== null) {
       return (
-        <p className={classes.row}>
-          b<sub className={classes.down}>{row.index}</sub>={row.bin_dec}
-        </p>
+          <Fade in={tmpRow > num} timeout={{enter: 1500, exit: 0}}>
+            <p className={classes.row}>
+              b<sub className={classes.down}>{row.index}</sub>={row.bin_dec}
+            </p>
+          </Fade>
       );
     }
-    return <p className={classes.row}>П =</p>;
+    return <Fade in={tmpRow > num} timeout={{enter: 1500, exit: 0}}><p className={classes.row}>П =</p></Fade>;
   };
 
   return (
@@ -97,15 +101,15 @@ const Res = ({ res, input }: ResProps) => {
       <div className={classes.showBit}>
         <p>A</p>
         <p>B</p>
-        {res.map((row) => getShowBit(row))}
+        {res.map((row, num) => getShowBit(row, num))}
       </div>
       <div className={classes.res}>
         <p className={classes.row}>{savedInput.firstVal}</p>
         <p className={`${classes.row} ${classes.lastRow}`}>
           {savedInput.secondVal}
         </p>
-        {res.map((row) => (
-          <p className={classes.row}>{getRow(row.index, row.value)}</p>
+        {res.map((row, num) => (
+          <p className={classes.row}>{getRow(row.index, row.value, num)}</p>
         ))}
       </div>
       <div className={classes.showPow}>
@@ -113,10 +117,12 @@ const Res = ({ res, input }: ResProps) => {
         <p className={classes.space}>_</p>
         {res.map((row, index) =>
           index !== res.length - 1 ? (
-            <p className={classes.row}>
-              A·2<sup className={classes.up}>{row.index}</sup>&nbsp;b
-              <sub className={classes.up}>{row.index}</sub>
-            </p>
+              <Fade in={tmpRow > index} timeout={{enter: 1500, exit: 0}}>
+                  <p className={classes.row}>
+                    A·2<sup className={classes.up}>{row.index}</sup>&nbsp;b
+                    <sub className={classes.up}>{row.index}</sub>
+                  </p>
+              </Fade>
           ) : (
             ""
           )

@@ -27,10 +27,12 @@ const inputs: CustomInputProps[] = [
   {
     id: "email",
     label: "Email",
+    isPassword: false,
   },
   {
     id: "password",
     label: "Пароль",
+    isPassword: true,
   },
 ];
 
