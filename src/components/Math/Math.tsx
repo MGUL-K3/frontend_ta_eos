@@ -4,13 +4,13 @@ import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import Button from "@material-ui/core/Button";
-import {blue, grey, red} from "@material-ui/core/colors";
+import { blue, grey, red } from "@material-ui/core/colors";
 import Paper from "@material-ui/core/Paper";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import { Fade } from "@material-ui/core";
-import React, {ChangeEvent, ReactEventHandler, useRef, useState} from "react";
+import React, { ChangeEvent, ReactEventHandler, useRef, useState } from "react";
 import CustomInput, { CustomInputProps } from "../CustomInput/CustomInput";
-import Res from "./Res";
+import Res from "./ShiftRes";
 import URLS from "../../config/urls";
 import TextField from "@material-ui/core/TextField";
 
@@ -87,22 +87,35 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
+/**
+ * Объявление методов умножения
+ */
 export enum multiplyEnum {
   NONE = "",
-  DIRECT_SHIFT_RIGHT = "Прямой код со сдвигом влево",
+  DIRECT_SHIFT_RIGHT = "Прямой код со сдвигом вправо",
+  DIRECT_SHIFT_LEFT = "Прямой код со сдвигом влево",
 }
 
+/**
+ * Интерфейс для инпутов
+ */
 export interface IMath {
   firstVal: string;
   secondVal: string;
 }
 
+/**
+ * Интерфейс для результата примера (если на беке он меняется, то надо поменять и тут)
+ */
 export interface IResult {
   index: number | null;
   bin_dec: string | null;
   value: string;
 }
 
+/**
+ * Перечисляем инпуты чтобы их потом отриосвать
+ */
 const inputs: CustomInputProps[] = [
   {
     id: "firstVal",
@@ -114,18 +127,14 @@ const inputs: CustomInputProps[] = [
   },
 ];
 
-
-
-
-
 const Math = () => {
   const classes = useStyles();
   const [multiply, setMultiply] = useState<string>(multiplyEnum.NONE);
   const [math, setMath] = useState<IMath>({} as IMath);
   const [res, setRes] = useState<IResult[]>({} as IResult[]);
   const [tmpPoint, setPoint] = useState<number>(-1);
-  const [tmpStep, setStep] = useState<string>('');
-  const [stepValue, setStepValue] = useState<string>('');
+  const [tmpStep, setStep] = useState<string>("");
+  const [stepValue, setStepValue] = useState<string>("");
   // let stepValue = '';
 
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -138,28 +147,49 @@ const Math = () => {
     setMath({ ...math, [e?.target?.id]: e.target.value });
   };
 
+  const sendDirectShiftLeft = () => {
+    const { firstVal, secondVal } = math;
+    const newUrl: string = URLS.math.directCode.leftShift(firstVal, secondVal);
+
+    fetch(newUrl)
+      .then((res) => res.json())
+      .then((json) => {
+        console.log(json);
+        if (json && json != []) {
+          console.log("IN");
+          setStepValue(json[0].value as string);
+        }
+        console.log("VALUE:", stepValue);
+        setPoint(0);
+        setRes(json);
+      });
+  };
+
+  const sendDirectShiftRight = () => {
+    // сюды вставить код когда сделаете новое умножение
+  };
+
+  /**
+   * Сюда закидываем новые методы
+   * Пишем их в кейсы, не забывая объявить в перечислениях
+   */
   const sendMath = () => {
-    //setRes(okRes);
-
-    const newUrl =
-      URLS.math.directCode.leftShift +
-      `?first_value=${math.firstVal}&second_value=${math.secondVal}`;
-
-    fetch(newUrl).then((res) => res.json()).then((json) => {
-      console.log(json)
-      if (json && json != []) {
-        console.log('IN')
-        setStepValue(json[0].value as string);
-      }
-      console.log('VALUE:', stepValue)
-      setPoint(0);
-      setRes(json)
-    });
+    switch (multiply) {
+      case multiplyEnum.DIRECT_SHIFT_LEFT:
+        sendDirectShiftLeft();
+        break;
+      case multiplyEnum.DIRECT_SHIFT_RIGHT:
+        sendDirectShiftRight();
+        break;
+      default:
+        console.error("нет такого метода");
+        break;
+    }
   };
 
   const onStepChange = (event: any) => {
     setStep(event.target.value);
-  }
+  };
 
   const nextStep = () => {
     if (tmpPoint < res.length - 1) {
@@ -168,22 +198,25 @@ const Math = () => {
     } else {
       setPoint(tmpPoint + 1);
     }
-  }
+  };
 
   const checkStepClick = () => {
     setStepValue(tmpStep as string);
-    console.log('VALUE:', stepValue)
-    console.log('RIGHT:', res[tmpPoint].value)
+    console.log("VALUE:", stepValue);
+    console.log("RIGHT:", res[tmpPoint].value);
     if (tmpStep === res[tmpPoint].value) {
-      setStep('');
+      setStep("");
       nextStep();
     }
-  }
+  };
 
   const checker = (): boolean => {
     // console.log('CHECKER >>> ' ,res[tmpPoint].value, '===', stepValue, 'tmpPoint = ', tmpPoint);
-    return res[tmpPoint < res.length - 1 ? tmpPoint : res.length - 1].value !== stepValue;
-  }
+    return (
+      res[tmpPoint < res.length - 1 ? tmpPoint : res.length - 1].value !==
+      stepValue
+    );
+  };
 
   return (
     <Paper
@@ -204,8 +237,8 @@ const Math = () => {
             value={multiply}
             onChange={handleChange}
           >
-            <MenuItem value={multiplyEnum.DIRECT_SHIFT_RIGHT}>
-              {multiplyEnum.DIRECT_SHIFT_RIGHT}
+            <MenuItem value={multiplyEnum.DIRECT_SHIFT_LEFT}>
+              {multiplyEnum.DIRECT_SHIFT_LEFT}
             </MenuItem>
           </Select>
           <FormHelperText>Выберите способ умножения</FormHelperText>
@@ -230,30 +263,47 @@ const Math = () => {
         ""
       )}
 
-      {(res.length > 0 && tmpPoint > -1) ? <Res input={math} res={res} tmpRow={tmpPoint} /> : ""}
+      {res.length > 0 && tmpPoint > -1 ? (
+        <Res input={math} res={res} tmpRow={tmpPoint} />
+      ) : (
+        ""
+      )}
 
-      {res.length > 0 ?
-          <div className={classes.steps}>
-            <TextField
-                value={tmpStep}
-                id="stepVal"
-                className={classes.stepInput}
-                onChange={onStepChange}
-                key="stepVal"
-                variant="outlined"
-                label="Промежуточный результат"
-                error={checker()}
-                helperText="Неверный ответ"
-            />
-            <Button onClick={checkStepClick} disabled={tmpPoint >= res.length} id="nextStepButton" variant="contained" color="primary">
-              Следующий шаг
-            </Button>
-            <Button onClick={nextStep} disabled={tmpPoint >= res.length} id="nextStepButton" variant="contained" color="primary">
-              Подсказать значение
-            </Button>
-          </div> : ""
-      }
-
+      {res.length > 0 ? (
+        <div className={classes.steps}>
+          <TextField
+            value={tmpStep}
+            id="stepVal"
+            className={classes.stepInput}
+            onChange={onStepChange}
+            key="stepVal"
+            variant="outlined"
+            label="Промежуточный результат"
+            error={checker()}
+            helperText="Неверный ответ"
+          />
+          <Button
+            onClick={checkStepClick}
+            disabled={tmpPoint >= res.length}
+            id="nextStepButton"
+            variant="contained"
+            color="primary"
+          >
+            Следующий шаг
+          </Button>
+          <Button
+            onClick={nextStep}
+            disabled={tmpPoint >= res.length}
+            id="nextStepButton"
+            variant="contained"
+            color="primary"
+          >
+            Подсказать значение
+          </Button>
+        </div>
+      ) : (
+        ""
+      )}
     </Paper>
   );
 };

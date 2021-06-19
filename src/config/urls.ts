@@ -5,9 +5,10 @@ const URLS = {
   logOut: "api/v1/users/logout/",
   registr: `http://127.0.0.1:${port}/api/v1/users/`,
   login: `http://127.0.0.1:${port}/api/v1/users/login/`,
-  math: {
+  math: { // Добавляем сюда новые ручки
     directCode: {
-      leftShift: `http://127.0.0.1:${port}/api/v1/calculations/direct_code/left_shift/`,
+      leftShift: (f: string, s: string) =>
+        `http://127.0.0.1:${port}/api/v1/calculations/direct_code/left_shift/?first_value=${f}&second_value=${s}`,
     },
   },
 };

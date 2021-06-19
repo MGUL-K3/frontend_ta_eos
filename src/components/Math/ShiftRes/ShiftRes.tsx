@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { IMath, IResult } from "../Math";
 import {Fade} from "@material-ui/core";
 
+// Забивка пустого места при сдвиге
+const placeholder = 9;
+
 const useStyles = makeStyles((theme: Theme) => ({
   layout: {
     display: "grid",
@@ -55,13 +58,13 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export interface ResProps {
+export interface ShiftResProps {
   input: IMath;
   res: IResult[];
   tmpRow: number;
 }
 
-const Res = ({ res, input, tmpRow }: ResProps) => {
+const ShiftRes = ({ res, input, tmpRow }: ShiftResProps) => {
   const classes = useStyles();
   const [savedInput, setSavedInput] = useState<IMath>({} as IMath);
 
@@ -77,7 +80,7 @@ const Res = ({ res, input, tmpRow }: ResProps) => {
     val.split("").map((bit) => res.push(<span>{bit}</span>));
 
     for (let i = 0; i < count; i++) {
-      res.push(<span className={classes.space}>_</span>);
+      res.push(<span className={classes.space}>{placeholder}</span>);
     }
 
     return <Fade in={tmpRow > num} timeout={{enter: 1500, exit: 0}}><span>{res}</span></Fade>;
@@ -113,8 +116,8 @@ const Res = ({ res, input, tmpRow }: ResProps) => {
         ))}
       </div>
       <div className={classes.showPow}>
-        <p className={classes.space}>_</p>
-        <p className={classes.space}>_</p>
+        <p className={classes.space}>{placeholder}</p>
+        <p className={classes.space}>{placeholder}</p>
         {res.map((row, index) =>
           index !== res.length - 1 ? (
               <Fade in={tmpRow > index} timeout={{enter: 1500, exit: 0}}>
@@ -132,4 +135,4 @@ const Res = ({ res, input, tmpRow }: ResProps) => {
   );
 };
 
-export default Res;
+export default ShiftRes;
